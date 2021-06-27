@@ -30,12 +30,12 @@ async def _todo_add(ctx, name=None, content=None):
         return await ctx.send(embed=embed)
 
     elif os.path.isdir(f"./ToDo/{ctx.author.id}/"):
-        with open(f"./ToDo/{ctx.author.id}/{name}.txt", "w", encoding="UTF-8") as f:
+        with open(f"./ToDo/{ctx.author.id}/{name}/content.txt", "w", encoding="UTF-8") as f:
             f.write(str(content))
 
     else:
         os.mkdir(f'./ToDo/{ctx.author.id}/')
-        with open(f"./ToDo/{ctx.author.id}/{name}.txt", "w", encoding="UTF-8") as f:
+        with open(f"./ToDo/{ctx.author.id}/{name}/content.txt", "w", encoding="UTF-8") as f:
             f.write(str(content))
 
     e = discord.Embed(
@@ -75,6 +75,9 @@ async def _todo_add(ctx, name=None, content=None):
         descs = await bot.wait_for("message", timeout=60, check=text_check)
         date = descs.content
 
+        with open(f"./ToDo/{ctx.author.id}/{name}/information.txt", "w", encoding="UTF-8") as f:
+            f.write(str(date) + '\n')
+
         await m.delete()
         await descs.delete()
 
@@ -104,8 +107,8 @@ async def _todo_add(ctx, name=None, content=None):
         try:
             reaction, user = await bot.wait_for("reaction_add", timeout=60, check=check1)
             if str(reaction.emoji) == emoji[0]:  # 마감 당일 안내 활성화
-                with open('./alarm.txt', 'a', encoding="UTF-8") as f:
-                    f.write(str(date) + '\n')
+                with open(f"./ToDo/{ctx.author.id}/{name}/content.txt", "a", encoding="UTF-8") as f:
+                    f.write('True\n')
 
                 embed = discord.Embed(
                     title='작업 진행 중',
@@ -127,12 +130,15 @@ async def _todo_add(ctx, name=None, content=None):
                 )
                 embed.set_footer(text='⬛ - 작업 진행중 ㅣ 🟥 - 작업 미진행 ㅣ 🟩 - 작업 완료')
                 await msg.edit(embed=embed)
-                try:
+                try:  # 작업 집중 메세지 활성화 - 비활성화 선택
                     reaction, user = await bot.wait_for("reaction_add", timeout=60, check=check1)
-                    if str(reaction.emoji) == emoji[0]:
+                    if str(reaction.emoji) == emoji[0]:  # 작업 집중 메세지 활성화
                         message2 = await ctx.send('알림 빈도를 5분 단위, 그리고 숫자만 입력해주세요.')
                         descc = await bot.wait_for("message", timeout=60, check=text_check)
                         time = descc.content
+                        with open(f"./ToDo/{ctx.author.id}/{name}/content.txt", "a", encoding="UTF-8") as f:
+                            f.write(f'{str(time)}\n')
+
                         await msgss.delete()
                         await descc.delete()
 
@@ -147,6 +153,8 @@ async def _todo_add(ctx, name=None, content=None):
                         await message2.delete()
                         await mmm.delete()
                     else:
+                        with open(f"./ToDo/{ctx.author.id}/{name}/content.txt", "a", encoding="UTF-8") as f:
+                            f.write(f'False\n')
                         await ctx.send('작업 집중 메세지를 비활성화 하였습니다.', delete_after=2.0)
                         embed = discord.Embed(
                             title='작업 완료',
@@ -162,6 +170,8 @@ async def _todo_add(ctx, name=None, content=None):
                     await ctx.send('시간이 초과되었습니다.')
 
             else:  # 마감 당일 안내 비활성화
+                with open(f"./ToDo/{ctx.author.id}/{name}/content.txt", "a", encoding="UTF-8") as f:
+                    f.write(f'False\n')
                 embed = discord.Embed(
                     title='작업 진행 중',
                     description=f'작업이 진행중입니다.\n\n마감일 등록     : 🟩\n  - `{date}`\n마감 당일 안내   : 🟩\n  - 비활성화\n작업 집중 메세지 : 🟥',
@@ -188,6 +198,8 @@ async def _todo_add(ctx, name=None, content=None):
                         msgmsg = await ctx.send('알림 빈도를 5분 단위, 그리고 숫자만 입력해주세요.')
                         descc = await bot.wait_for("message", timeout=60, check=text_check)
                         time = descc.content
+                        with open(f"./ToDo/{ctx.author.id}/{name}/content.txt", "a", encoding="UTF-8") as f:
+                            f.write(f'{str(time)}\n')
                         await msgmsg.delete()
                         await msgss.delete()
                         await descc.delete()
@@ -204,6 +216,8 @@ async def _todo_add(ctx, name=None, content=None):
                         await mmm.delete()
                     else:  # 작업 집중 메세지 비활성화
                         await ctx.send('작업 집중 메세지를 비활성화 하였습니다.', delete_after=1.0)
+                        with open(f"./ToDo/{ctx.author.id}/{name}/content.txt", "a", encoding="UTF-8") as f:
+                            f.write(f'False\n')
                         await mmm.delete()
                         await msgss.delete()
                         embed = discord.Embed(
