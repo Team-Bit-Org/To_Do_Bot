@@ -1,9 +1,11 @@
 from discord.ext import commands
 from pymongo import MongoClient
+from dotenv import load_dotenv
 import asyncio
 import discord
 import os
 
+load_dotenv()
 coll = MongoClient("mongodb://localhost:27017/").ToDo.user
 bot = commands.Bot(
     command_prefix="-",
@@ -239,5 +241,5 @@ async def _todo_add(ctx, name=None, content=None):
         await ctx.send("시간이 초과되었습니다.")
 
 
-bot.run('ODUxMDkyOTEzNTM3NTQ4MzQ4.YLzQCw.R-mbTy9kiGCqYZAD_1rmKY4K8Sw')
+bot.run(os.getenv("TOKEN"))
 
