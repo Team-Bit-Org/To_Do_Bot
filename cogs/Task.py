@@ -14,7 +14,8 @@ class Task(commands.Cog):
             ff = f.readlines()
 
         with open('../count.txt', 'w', encoding="UTF-8") as f:
-            f.write(str(int(ff[0] + 5)))
+            asdf = int(ff[0]) + 5
+            f.write(str(asdf))
 
         todo_listdir = os.listdir('./ToDo/')
 
@@ -26,8 +27,13 @@ class Task(commands.Cog):
                 for iii in ff:
                     ff.remove(iii)
                     ff.append(iii.strip())
-                if int(ff[2]) == int(ff[0]) + 5:
+                if int(ff[2]) == int(asdf):
                     user = self.bot.get_user(int(i))
                     await user.send(f'<@{i}> 님 To Do `{ii}` 작업 집중 메세지입니다!')
                 else:
                     continue
+
+
+def setup(bot):
+    bot.add_cog(Task(bot))
+    print('Cogs Tasks On Ready.')
