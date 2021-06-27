@@ -8,7 +8,7 @@ class Task(commands.Cog):
         self.bot = bot
         self.check_alarm.start()
 
-    @tasks.loop(minutes=5)
+    @tasks.loop(minutes=5.0)
     async def check_alarm(self):
         with open('../count.txt', 'r', encoding="UTF-8") as f:
             ff = f.readlines()
@@ -32,6 +32,12 @@ class Task(commands.Cog):
                     await user.send(f'<@{i}> 님 To Do `{ii}` 작업 집중 메세지입니다!')
                 else:
                     continue
+
+    @check_alarm.before_loop
+    async def before_check_alarm(self):
+        print('check_alarm task wait..')
+        await self.bot.wait_until_ready()
+        print('check_alarm task is ready.')
 
 
 def setup(bot):
