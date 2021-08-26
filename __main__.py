@@ -43,4 +43,4 @@ async def on_command_error(ctx, error):
     await chn.send(embed=embed)
 
 
-bot.run(os.getenv("TOKEN"), reconnect=True)
+bot.run("ODUxMDkyOTEzNTM3NTQ4MzQ4.YLzQCw.vepkV7P0iXBJPFqx-8RiFM-xQPw", reconnect=True)
